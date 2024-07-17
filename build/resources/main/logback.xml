@@ -1,0 +1,44 @@
+<configuration>
+    <!-- Settings for standard output -->
+    <appender name="CONSOLE-STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %highlight(%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{20}.%M\(%F:%L\): %msg) %n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!--async output-->
+    <appender name="ASYNC-ALL" class="ch.qos.logback.classic.AsyncAppender">
+        <!--By default, if 80% of the queue is full, TRACT, DEBUG, and INFO level logs are discarded-->
+        <discardingThreshold>0</discardingThreshold>
+        <!--Change the default queue depth, which affects performance. The default value is 256-->
+        <queueSize>256</queueSize>
+        <!--Add a maximum of one appender-->
+        <appender-ref ref="ALL-FILE"/>
+    </appender>
+
+    <!-- Settings for file output -->
+    <appender name="ALL-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ALL</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- switch log files by day -->
+            <fileNamePattern>src/log/%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Maximum number of log archive files to keep -->
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{20}.%M\(%F:%L\): %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- root logger -->
+    <root level="INFO">
+        <!-- Output all logger messages to the defined BAR-STDOUT appender -->
+        <appender-ref ref="CONSOLE-STDOUT"/>
+        <appender-ref ref="ASYNC-ALL"/>
+    </root>
+</configuration>
