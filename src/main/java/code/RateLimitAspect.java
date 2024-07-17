@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Aspect
@@ -38,7 +37,7 @@ public class RateLimitAspect {
 		RateLimiter rateLimiter = EXISTED_RATE_LIMITERS.computeIfAbsent(method.getName(), k -> RateLimiter.create(annotation.limit()));
 
 		// process
-		if (rateLimiter != null && rateLimiter.tryAcquire()) {
+		if (rateLimiter.tryAcquire()) {
 			return proceedingJoinPoint.proceed();
 		} else {
 			throw new RuntimeException("too many requests, please try again later...");
